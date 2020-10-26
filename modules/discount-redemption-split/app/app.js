@@ -1,10 +1,6 @@
 const express = require('express');
 const configJSON = require('../config/config-json');
 
-const util = require('util');
-const endpointDebug = util.debuglog('POST');
-const endpointBodyDebug = util.debuglog('POST-BODY');
-
 // setup the split example app
 module.exports = function splitExample(app, options) {
     const moduleDirectory = `${options.rootDirectory}/modules/discount-redemption-split`;
@@ -12,14 +8,6 @@ module.exports = function splitExample(app, options) {
     // setup static resources
     app.use('/modules/discount-redemption-split/dist', express.static(`${moduleDirectory}/dist`));
     app.use('/modules/discount-redemption-split/images', express.static(`${moduleDirectory}/images`));
-
-    app.use(function(req, res, next) {
-        if (req.method === 'POST') {
-            endpointDebug(req.originalUrl);
-            endpointBodyDebug(JSON.stringify(req.body));
-        }
-        next();
-    });
 
     // setup the index redirect
     app.get('/modules/discount-redemption-split/', function(req, res) {

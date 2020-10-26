@@ -1,6 +1,9 @@
 const express = require('express');
 const path = require('path');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const util = require('util');
+const endpointDebug = util.debuglog('POST');
+const endpointBodyDebug = util.debuglog('POST-BODY');
 
 const submodules = [
     require('./modules/discount-code/app/app'),
@@ -10,7 +13,15 @@ const submodules = [
 const app = express();
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+app.use(function(req, res, next) {
+    if (req.method === 'POST') {
+        endpointDebug(req.originalUrl);
+        endpointBodyDebug(JSON.stringify(req.body));
+    }
+    next();
+});
 
 app.set('port', (process.env.PORT || 8080));
 app.use('/', express.static(path.join(__dirname, 'home')));

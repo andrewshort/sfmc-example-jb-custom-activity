@@ -14,10 +14,6 @@
 const express = require('express');
 const configJSON = require('../config/config-json');
 
-const util = require('util');
-const endpointDebug = util.debuglog('POST');
-const endpointBodyDebug = util.debuglog('POST-BODY');
-
 // setup the discount-code example app
 module.exports = function discountCodeExample(app, options) {
     const moduleDirectory = `${options.rootDirectory}/modules/discount-code`;
@@ -25,14 +21,6 @@ module.exports = function discountCodeExample(app, options) {
     // setup static resources
     app.use('/modules/discount-code/dist', express.static(`${moduleDirectory}/dist`));
     app.use('/modules/discount-code/images', express.static(`${moduleDirectory}/images`));
-
-    app.use(function(req, res, next) {
-        if (req.method === 'POST') {
-            endpointDebug(req.originalUrl);
-            endpointBodyDebug(JSON.stringify(req.body));
-        }
-        next();
-    });
 
     // setup the index redirect
     app.get('/modules/discount-code/', function(req, res) {
@@ -168,7 +156,7 @@ module.exports = function discountCodeExample(app, options) {
             discountCode: generateRandomCode() + `-${discountInArgument}%`
         };
 
-        endpointBodyDebug('Response Object', JSON.stringify(responseObject));
+        console.log('Response Object', JSON.stringify(responseObject));
 
         return res.status(200).json(responseObject);
     });
