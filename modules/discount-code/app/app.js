@@ -29,7 +29,7 @@ module.exports = function discountCodeExample(app, options) {
     app.use(function(req, res, next) {
         if (req.method === 'POST') {
             endpointDebug(req.originalUrl);
-            endpointBodyDebug(JSON.stringify(req.originalUrl));
+            endpointBodyDebug(JSON.stringify(req.body));
         }
         next();
     });
