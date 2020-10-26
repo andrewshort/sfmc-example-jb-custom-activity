@@ -14,6 +14,10 @@
 const express = require('express');
 const configJSON = require('../config/config-json');
 
+const util = require('util');
+const endpointDebug = util.debuglog('POST');
+const endpointBodyDebug = util.debuglog('POST-BODY');
+
 // setup the discount-code example app
 module.exports = function discountCodeExample(app, options) {
     const moduleDirectory = `${options.rootDirectory}/modules/discount-code`;
@@ -21,6 +25,14 @@ module.exports = function discountCodeExample(app, options) {
     // setup static resources
     app.use('/modules/discount-code/dist', express.static(`${moduleDirectory}/dist`));
     app.use('/modules/discount-code/images', express.static(`${moduleDirectory}/images`));
+
+    app.use(function(req, res, next) {
+        if (req.method === 'POST') {
+            endpointDebug(req.originalUrl);
+            endpointBodyDebug(JSON.stringify(req.originalUrl));
+        }
+        next();
+    });
 
     // setup the index redirect
     app.get('/modules/discount-code/', function(req, res) {
@@ -58,7 +70,6 @@ module.exports = function discountCodeExample(app, options) {
      * 50x - Return if the configuration is invalid (this will block the publish phase)
      */
     app.post('/modules/discount-code/save', function(req, res) {
-        console.log('debug: /modules/discount-code/save');
         return res.status(200).json({});
     });
 
@@ -73,7 +84,6 @@ module.exports = function discountCodeExample(app, options) {
      * 50x - Return if the configuration is invalid (this will block the publish phase)
      */
     app.post('/modules/discount-code/publish', function(req, res) {
-        console.log('debug: /modules/discount-code/publish');
         return res.status(200).json({});
     });
 
@@ -87,7 +97,6 @@ module.exports = function discountCodeExample(app, options) {
      * 50x - Return if the configuration is invalid (this will block the publish phase)
      */
     app.post('/modules/discount-code/validate', function(req, res) {
-        console.log('debug: /modules/discount-code/validate');
         return res.status(200).json({});
     });
 
@@ -103,7 +112,6 @@ module.exports = function discountCodeExample(app, options) {
      * @return {[type]}
      */
     app.post('/modules/discount-code/stop', function(req, res) {
-        console.log('debug: /modules/discount-code/stop');
         return res.status(200).json({});
     });
 
@@ -116,11 +124,8 @@ module.exports = function discountCodeExample(app, options) {
      * 5xx - Contact is ejected from the Journey.
      */
     app.post('/modules/discount-code/execute', function(req, res) {
-        console.log('debug: /modules/discount-code/execute');
 
         const request = req.body;
-
-        console.log(" req.body", JSON.stringify(req.body));
 
         // Find the in argument
         function getInArgument(k) {
@@ -163,7 +168,7 @@ module.exports = function discountCodeExample(app, options) {
             discountCode: generateRandomCode() + `-${discountInArgument}%`
         };
 
-        console.log('Response Object', JSON.stringify(responseObject));
+        endpointBodyDebug('Response Object', JSON.stringify(responseObject));
 
         return res.status(200).json(responseObject);
     });

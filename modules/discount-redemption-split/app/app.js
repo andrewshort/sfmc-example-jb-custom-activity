@@ -1,6 +1,10 @@
 const express = require('express');
 const configJSON = require('../config/config-json');
 
+const util = require('util');
+const endpointDebug = util.debuglog('POST');
+const endpointBodyDebug = util.debuglog('POST-BODY');
+
 // setup the split example app
 module.exports = function splitExample(app, options) {
     const moduleDirectory = `${options.rootDirectory}/modules/discount-redemption-split`;
@@ -8,6 +12,14 @@ module.exports = function splitExample(app, options) {
     // setup static resources
     app.use('/modules/discount-redemption-split/dist', express.static(`${moduleDirectory}/dist`));
     app.use('/modules/discount-redemption-split/images', express.static(`${moduleDirectory}/images`));
+
+    app.use(function(req, res, next) {
+        if (req.method === 'POST') {
+            endpointDebug(req.originalUrl);
+            endpointBodyDebug(JSON.stringify(req.originalUrl));
+        }
+        next();
+    });
 
     // setup the index redirect
     app.get('/modules/discount-redemption-split/', function(req, res) {
@@ -45,7 +57,6 @@ module.exports = function splitExample(app, options) {
      * 50x - Return if the configuration is invalid (this will block the publish phase)
      */
     app.post('/modules/discount-redemption-split/save', function(req, res) {
-        console.log('debug: /modules/discount-redemption-split/save');
         return res.status(200).json({});
     });
 
@@ -60,7 +71,6 @@ module.exports = function splitExample(app, options) {
      * 50x - Return if the configuration is invalid (this will block the publish phase)
      */
     app.post('/modules/discount-redemption-split/publish', function(req, res) {
-        console.log('debug: /modules/discount-redemption-split/publish');
         return res.status(200).json({});
     });
 
@@ -74,7 +84,6 @@ module.exports = function splitExample(app, options) {
      * 50x - Return if the configuration is invalid (this will block the publish phase)
      */
     app.post('/modules/discount-redemption-split/validate', function(req, res) {
-        console.log('debug: /modules/discount-redemption-split/validate');
         return res.status(200).json({});
     });
 
@@ -90,7 +99,6 @@ module.exports = function splitExample(app, options) {
      * @return {[type]}
      */
     app.post('/modules/discount-redemption-split/stop', function(req, res) {
-        console.log('debug: /modules/discount-redemption-split/stop');
         return res.status(200).json({});
     });
 
@@ -103,12 +111,8 @@ module.exports = function splitExample(app, options) {
      * 5xx - Contact is ejected from the Journey.
      */
     app.post('/modules/discount-redemption-split/execute', function(req, res) {
-        console.log('debug: /modules/discount-redemption-split/execute');
 
         var request = req.body;
-
-        console.log('req', req === undefined ? 'empty' : 'has');
-        console.log('req.body', req.body);
 
         // Find the in argument
         var getInArgument = (k) => {

@@ -33,12 +33,15 @@ module.exports = function configJSON(req) {
         // wait in ms between retry.
         retryDelay: 1000,
         // The number of concurrent requests Journey Builder will send all together
-        concurrentRequests: 5
+        concurrentRequests: 5,
+
+        includeMidEid: true
       }
     },
     configurationArguments: {
       publish: {
-        url: `https://${req.headers.host}/modules/discount-code/publish`
+        url: `https://${req.headers.host}/modules/discount-code/publish`,
+        includeMidEid: true
       },
       validate: {
         url: `https://${req.headers.host}/modules/discount-code/validate`
